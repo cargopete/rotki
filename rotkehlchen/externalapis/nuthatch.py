@@ -15,6 +15,11 @@ from rotkehlchen.db.settings import CachedSettings
 from rotkehlchen.errors.misc import ChainNotSupported, IndexerRangeStartsLater, RemoteError
 from rotkehlchen.errors.serialization import DeserializationError
 from rotkehlchen.externalapis.etherscan import EtherscanAccountHistory
+from rotkehlchen.externalapis.nuthatch_embedded import (
+    EMBEDDED_NEST_URL,
+    EmbeddedNest,
+    EmbeddedNestAdapter,
+)
 from rotkehlchen.logging import RotkehlchenLogsAdapter
 from rotkehlchen.serialization.deserialize import deserialize_evm_transaction
 from rotkehlchen.types import (
@@ -73,6 +78,20 @@ PAGES_READ: Final = '_nuthatch_pages_read'
 TRACE_INDEX: Final = 'nuthatchTraceIndex'
 
 
+def _nest_base_url() -> str:
+    """The embedded module when it is turned on, otherwise the configured nest.
+
+    May raise:
+    - RemoteError if neither is configured
+    """
+    if CachedSettings().get_entry('nuthatch_embedded') is True:
+        return EMBEDDED_NEST_URL
+    if (endpoint := CachedSettings().get_entry('nuthatch_api_endpoint')) == '':
+        raise RemoteError('No nuthatch endpoint is configured')
+
+    return str(endpoint).rstrip('/')
+
+
 class NuthatchPage(list):  # noqa: FURB189  # a real list, as the base's callers expect
     """A page of rows, the snapshot the nest cut it from, and the answer's other top-level
     fields."""
@@ -124,13 +143,12 @@ class Nuthatch(EtherscanAccountHistory):
             ),
             indexer_stats=indexer_stats,
         )
+        self.embedded = EmbeddedNest(database=database)
+        self.session.mount(EMBEDDED_NEST_URL, EmbeddedNestAdapter(self.embedded))
 
     @staticmethod
     def _get_url(chain_id: SUPPORTED_CHAIN_IDS) -> str:
-        if (endpoint := CachedSettings().get_entry('nuthatch_api_endpoint')) == '':
-            raise RemoteError('No nuthatch endpoint is configured')
-
-        return f'{str(endpoint).rstrip("/")}/api'
+        return f'{_nest_base_url()}/api'
 
     def _get_api_key_for_chain(self, chain_id: ChainID) -> ApiKey | None:
         """A nest takes no API key."""
@@ -491,7 +509,7 @@ class Nuthatch(EtherscanAccountHistory):
         May raise:
         - RemoteError if the nest cannot be reached or refuses the call
         """
-        url = f'{str(CachedSettings().get_entry("nuthatch_api_endpoint")).rstrip("/")}{path}'
+        url = f'{_nest_base_url()}{path}'
         try:
             response = self.session.request(
                 method=method,
@@ -539,7 +557,7 @@ class Nuthatch(EtherscanAccountHistory):
         May raise:
         - RemoteError if the nest cannot be reached
         """
-        if CachedSettings().get_entry('nuthatch_api_endpoint') == '' or EvmIndexer.NUTHATCH not in CachedSettings().get_evm_indexers_order_for_chain(chain_id=ChainID.ETHEREUM):  # noqa: E501
+        if (CachedSettings().get_entry('nuthatch_api_endpoint') == '' and CachedSettings().get_entry('nuthatch_embedded') is not True) or EvmIndexer.NUTHATCH not in CachedSettings().get_evm_indexers_order_for_chain(chain_id=ChainID.ETHEREUM):  # noqa: E501
             return
 
         if self._nest_call('GET', '/ready').get('chain_id') != ChainID.ETHEREUM.value:

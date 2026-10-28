@@ -74,6 +74,8 @@ class DBCacheStatic(Enum):
     # Produced blocks booked from a nuthatch nest's proof of their proposer, as a JSON list: what
     # no other source may book to another validator.
     NUTHATCH_PROVEN_BLOCKS: Final = 'nuthatch_proven_blocks'
+    # The embedded nuthatch module's store, zlib-compressed and base64-encoded.
+    NUTHATCH_EMBEDDED_STATE: Final = 'nuthatch_embedded_state'
 
 
 class LabeledLocationArgsType(TypedDict):

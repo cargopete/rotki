@@ -1588,7 +1588,7 @@ class Rotkehlchen:
                 return False, msg
 
         # a new nest may index a chain the previous one did not
-        if settings.nuthatch_api_endpoint is not None:
+        if settings.nuthatch_api_endpoint is not None or settings.nuthatch_embedded is not None:
             self.chains_aggregator.enable_nuthatch_indexer(self.nuthatch)
 
         if settings.btc_derivation_gap_limit is not None:
@@ -1618,7 +1618,7 @@ class Rotkehlchen:
             self.data.db.set_settings(cursor, settings)
         # A nest set up after the accounts were added, or named in Ethereum's order only now, has
         # not been told about them yet.
-        if settings.nuthatch_api_endpoint is not None or (
+        if settings.nuthatch_api_endpoint is not None or settings.nuthatch_embedded is True or (
             not nest_was_ordered and self._ethereum_orders_nuthatch()
         ):
             self.schedule_nuthatch_watch_sync()

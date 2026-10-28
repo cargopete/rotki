@@ -106,6 +106,7 @@ DEFAULT_BEACON_RPC: Final = 'https://ethereum-beacon-api.publicnode.com'
 # Where `nuthatch dev` listens by default. It is only asked once the user puts Nuthatch in an
 # indexer order.
 DEFAULT_NUTHATCH_API_ENDPOINT: Final = 'http://127.0.0.1:8288'
+DEFAULT_NUTHATCH_EMBEDDED: Final = False
 
 LIST_KEYS: Final = (
     'current_price_oracles',
@@ -136,6 +137,7 @@ BOOLEAN_KEYS: Final = (
     'auto_detect_tokens',
     'auto_create_profit_events',
     'use_asset_collections_in_cost_basis',
+    'nuthatch_embedded',
 )
 INTEGER_KEYS: Final = (
     'version',
@@ -196,6 +198,7 @@ CachedDBSettingsFieldNames = Literal[
     'dot_rpc_endpoint',
     'beacon_rpc_endpoint',
     'nuthatch_api_endpoint',
+    'nuthatch_embedded',
     'btc_mempool_api',
     'main_currency',
     'date_display_format',
@@ -277,6 +280,7 @@ class DBSettings:
     dot_rpc_endpoint: str = ''
     beacon_rpc_endpoint: str = DEFAULT_BEACON_RPC
     nuthatch_api_endpoint: str = DEFAULT_NUTHATCH_API_ENDPOINT
+    nuthatch_embedded: bool = DEFAULT_NUTHATCH_EMBEDDED
     btc_mempool_api: str = ''
     main_currency: Asset = DEFAULT_MAIN_CURRENCY
     date_display_format: str = DEFAULT_DATE_DISPLAY_FORMAT
@@ -365,6 +369,7 @@ class ModifiableDBSettings(NamedTuple):
     dot_rpc_endpoint: str | None = None
     beacon_rpc_endpoint: str | None = None
     nuthatch_api_endpoint: str | None = None
+    nuthatch_embedded: bool | None = None
     main_currency: AssetWithOracles | None = None
     date_display_format: str | None = None
     submit_usage_analytics: bool | None = None

@@ -132,6 +132,7 @@ a = Entrypoint(
         ('rotkehlchen/data/globaldb_v2_v3_assets.sql', 'rotkehlchen/data'),
         ('rotkehlchen/data/nodes.json', 'rotkehlchen/data'),
         ('rotkehlchen/data/nodes_as_of_1-26-1.json', 'rotkehlchen/data'),
+        ('rotkehlchen/data/nuthatch_embed.wasm', 'rotkehlchen/data'),
         ('rotkehlchen/data/populate_asset_collections.sql', 'rotkehlchen/data'),
         ('rotkehlchen/data/populate_multiasset_mappings.sql', 'rotkehlchen/data'),
         ('rotkehlchen/data/populate_location_asset_mappings.sql', 'rotkehlchen/data'),
