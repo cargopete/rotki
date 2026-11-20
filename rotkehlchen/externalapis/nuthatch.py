@@ -4,7 +4,14 @@ from rotkehlchen.db.settings import CachedSettings
 from rotkehlchen.errors.cause import FailureCause
 from rotkehlchen.errors.misc import RemoteError
 from rotkehlchen.externalapis.etherscan_like import EtherscanLikeApi
-from rotkehlchen.types import SUPPORTED_CHAIN_IDS, ApiKey, ChainID, ChecksumEvmAddress, EVMTxHash
+from rotkehlchen.types import (
+    SUPPORTED_CHAIN_IDS,
+    ApiKey,
+    ChainID,
+    ChecksumEvmAddress,
+    EVMTxHash,
+    SupportedBlockchain,
+)
 from rotkehlchen.utils.rate_limiter import TokenBucket
 
 if TYPE_CHECKING:
@@ -17,6 +24,11 @@ if TYPE_CHECKING:
 
 
 NUTHATCH_PAGINATION_LIMIT: Final = 1000
+NUTHATCH_SUPPORTED_CHAINS: Final = (
+    SupportedBlockchain.ETHEREUM,
+    SupportedBlockchain.BASE,
+    SupportedBlockchain.BINANCE_SC,
+)
 # A nest runs on the user's own machine, so this only keeps a sync from flooding it.
 NUTHATCH_RATE_LIMIT_RPS: Final = 50.0
 NUTHATCH_RATE_LIMIT_BURST: Final = 50

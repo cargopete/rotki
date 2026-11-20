@@ -47,8 +47,10 @@ describe('evm-indexer-utils', () => {
       expect(optimism.itemDataForId(EvmIndexer.ROUTESCAN)).toBeUndefined();
     });
 
-    it('should offer a self-hosted nuthatch nest on ethereum only', () => {
+    it('should offer a self-hosted nuthatch nest on ethereum, base and bsc only', () => {
       expect(getAvailableIndexersForChain('eth').itemDataForId(EvmIndexer.NUTHATCH)).toBeDefined();
+      expect(getAvailableIndexersForChain('base').itemDataForId(EvmIndexer.NUTHATCH)).toBeDefined();
+      expect(getAvailableIndexersForChain('binance_sc').itemDataForId(EvmIndexer.NUTHATCH)).toBeDefined();
       expect(getAvailableIndexersForChain('optimism').itemDataForId(EvmIndexer.NUTHATCH)).toBeUndefined();
     });
 

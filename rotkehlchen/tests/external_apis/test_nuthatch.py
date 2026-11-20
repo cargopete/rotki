@@ -8,10 +8,10 @@ from rotkehlchen.chain.evm.types import string_to_evm_address
 from rotkehlchen.chain.structures import TimestampOrBlockRange
 from rotkehlchen.db.settings import CachedSettings
 from rotkehlchen.errors.misc import RemoteError
-from rotkehlchen.externalapis.nuthatch import Nuthatch
+from rotkehlchen.externalapis.nuthatch import NUTHATCH_SUPPORTED_CHAINS, Nuthatch
 from rotkehlchen.tests.utils.factories import make_evm_address, make_evm_tx_hash
 from rotkehlchen.tests.utils.mock import MockResponse
-from rotkehlchen.types import ChainID
+from rotkehlchen.types import ChainID, SupportedBlockchain
 
 ACCOUNT = string_to_evm_address('0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045')
 
@@ -81,3 +81,22 @@ def test_nuthatch_internal_trace_index(nuthatch: Nuthatch) -> None:
         ) for tx in page]
 
     assert [(tx.trace_id, tx.value) for tx in txs] == [(17, 1), (22, 2)]
+
+
+def test_nuthatch_chainid_param_for_base_and_bsc(nuthatch: Nuthatch) -> None:
+    """The nest is told which chain to answer for, so one nest can serve Base and BSC."""
+    for chain_id, expected in ((ChainID.BASE, '8453'), (ChainID.BINANCE_SC, '56')):
+        assert nuthatch._build_query_params(
+            module='account',
+            action='txlist',
+            api_key=nuthatch.default_api_key,
+            chain_id=chain_id,
+        )['chainid'] == expected
+
+
+def test_nuthatch_supported_chains() -> None:
+    assert set(NUTHATCH_SUPPORTED_CHAINS) == {
+        SupportedBlockchain.ETHEREUM,
+        SupportedBlockchain.BASE,
+        SupportedBlockchain.BINANCE_SC,
+    }

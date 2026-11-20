@@ -108,7 +108,7 @@ from rotkehlchen.externalapis.jupiter import Jupiter
 from rotkehlchen.externalapis.kraken import Kraken
 from rotkehlchen.externalapis.monerium import Monerium
 from rotkehlchen.externalapis.moralis import Moralis
-from rotkehlchen.externalapis.nuthatch import Nuthatch
+from rotkehlchen.externalapis.nuthatch import NUTHATCH_SUPPORTED_CHAINS, Nuthatch
 from rotkehlchen.externalapis.routescan import Routescan
 from rotkehlchen.fval import FVal
 from rotkehlchen.globaldb.asset_updates.manager import AssetsUpdater
@@ -684,12 +684,14 @@ class Rotkehlchen:
             (chain.to_chain_id(), self.chains_aggregator.get_chain_manager(chain))
             for chain in EVM_CHAINS_WITH_TRANSACTIONS
         ])
-        # Only asked once the user puts it in Ethereum's indexer order.
-        self.chains_aggregator.ethereum.node_inquirer.available_indexers[EvmIndexer.NUTHATCH] = Nuthatch(  # noqa: E501
+        # Only asked once the user puts it in the indexer order of one of these chains.
+        nuthatch = Nuthatch(
             database=self.data.db,
             msg_aggregator=self.msg_aggregator,
             indexer_stats=self.indexer_stats,
         )
+        for nuthatch_chain in NUTHATCH_SUPPORTED_CHAINS:
+            self.chains_aggregator.get_chain_manager(nuthatch_chain).node_inquirer.available_indexers[EvmIndexer.NUTHATCH] = nuthatch  # noqa: E501
 
         price_historian = PriceHistorian(  # Initialize the price historian singleton
             data_directory=self.data_dir,

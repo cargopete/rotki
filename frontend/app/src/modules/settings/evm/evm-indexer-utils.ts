@@ -46,10 +46,12 @@ const ETHERSCAN_AND_BLOCKSCOUT_ITEMS: Array<PrioritizedListItemData<EvmIndexer>>
 
 /**
  * Chains served by other indexers than Etherscan and Blockscout. Mirrors the backend's
- * `ROUTESCAN_SUPPORTED_CHAINS`, `BLOCKSCOUT_SUPPORTED_CHAINS` and `DEFAULT_INDEXERS_ORDER`.
+ * `ROUTESCAN_SUPPORTED_CHAINS`, `BLOCKSCOUT_SUPPORTED_CHAINS`, `NUTHATCH_SUPPORTED_CHAINS` and
+ * `DEFAULT_INDEXERS_ORDER`.
  */
 const CHAIN_SUPPORTED_INDEXERS = new Map<string, Array<PrioritizedListItemData<EvmIndexer>>>([
-  ['binance_sc', [ETHERSCAN_PRIO_LIST_ITEM]],
+  ['base', [ETHERSCAN_PRIO_LIST_ITEM, BLOCKSCOUT_PRIO_LIST_ITEM, NUTHATCH_PRIO_LIST_ITEM]],
+  ['binance_sc', [ETHERSCAN_PRIO_LIST_ITEM, NUTHATCH_PRIO_LIST_ITEM]],
   ['eth', ALL_INDEXER_ITEMS],
   ['monad', [ETHERSCAN_PRIO_LIST_ITEM]],
   ['scroll', [BLOCKSCOUT_PRIO_LIST_ITEM]],
